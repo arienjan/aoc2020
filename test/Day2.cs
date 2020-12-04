@@ -17,6 +17,7 @@ namespace AocTest
             // assert
             Assert.Equal(2, result);
         }
+
         [Fact]
         public void Part2()
         {
