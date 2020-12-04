@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\day1\Day1.csproj" />
+    <ProjectReference Include="..\src\Day2\Day2.csproj" />
   </ItemGroup>
 
 </Project>
