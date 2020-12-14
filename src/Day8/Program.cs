@@ -16,25 +16,62 @@ namespace Day8
             var solutionPart1 = Part1Solution(input);
             Console.WriteLine(solutionPart1);
 
-            // part2, Moet ik hier nou gaan loopen en elke nop of jmp proberen te veranderen. Dat denk ik wel... Nu ff geen zin in
+            // part2
             var solutionPart2 = Part2Solution(input);
             Console.WriteLine(solutionPart2);
         }
 
         public static int Part1Solution(IEnumerable<string> entries)
         {
-            var value = 0;
-            var iter = 0;
-            var executedEntries = new HashSet<int>();
+            var instructions = FormatEntries(entries);
+            return DoesItLoop(instructions).Item1;
+        }
 
-            var instructions = entries.Select(e =>
+        public static int Part2Solution(IEnumerable<string> entries)
+        {
+            var instructions = FormatEntries(entries);
+
+            for (int i = 0; i < instructions.Count(); i++)
+            {
+                var instruction = instructions[i];
+                var instructionLoop = instructions.Select(i => i).ToList(); // clone lijst
+
+                if (instruction.Item1 == "nop")
+                    instruction = new Tuple<string, int>("jmp", instruction.Item2);
+                else if (instruction.Item1 == "jmp")
+                    instruction = new Tuple<string, int>("nop", instruction.Item2);
+
+                instructionLoop[i] = instruction;
+
+                var bla = DoesItLoop(instructionLoop);
+
+                if (bla.Item2 == false)
+                    return bla.Item1;
+            }
+
+            return 1;
+        }
+
+        private static List<Tuple<string, int>> FormatEntries(IEnumerable<string> entries)
+        {
+            return entries.Select(e =>
             {
                 var values = e.Split(' ');
                 return new Tuple<string, int>(values[0], int.Parse(values[1]));
             }).ToList();
+        }
 
+        private static (int, bool) DoesItLoop(List<Tuple<string, int>> instructions)
+        {
+            var loops = false;
+            var value = 0;
+            var iter = 0;
+            var secontToLastCommand = false;
+            var lastcommand = false;
+            var numberofEntries = instructions.Count();
+            var executedEntries = new HashSet<int>();
 
-            while (!executedEntries.Any(ee => ee == iter))
+            while (!lastcommand)
             {
                 var command = instructions[iter];
 
@@ -56,45 +93,11 @@ namespace Day8
                         Console.WriteLine("DOOM");
                         break;
                 }
-            }
 
-            return value;
-        }
-
-        public static int Part2Solution(IEnumerable<string> entries)
-        {
-            var value = 0;
-            var iter = 0;
-            var secontToLastCommand = false;
-            var lastcommand = false;
-            var numberofEntries = entries.Count();
-
-            var instructions = entries.Select(e =>
-            {
-                var values = e.Split(' ');
-                return new Tuple<string, int>(values[0], int.Parse(values[1]));
-            }).ToList();
-
-
-            while (!lastcommand)
-            {
-                var command = instructions[iter];
-
-                switch (command.Item1)
+                if (executedEntries.Any(ee => ee == iter))
                 {
-                    case "nop":
-                        iter = iter + command.Item2 == numberofEntries - 1 || iter + command.Item2 == numberofEntries - 2 ? iter + command.Item2 : iter + 1;
-                        break;
-                    case "acc":
-                        iter++;
-                        value += command.Item2;
-                        break;
-                    case "jmp":
-                        iter = iter + 1 == numberofEntries - 1 || iter + 1 == numberofEntries - 2 ? iter + 1 : iter + command.Item2;
-                        break;
-                    default:
-                        Console.WriteLine("DOOM");
-                        break;
+                    loops = true;
+                    break;
                 }
 
                 if (secontToLastCommand)
@@ -104,7 +107,7 @@ namespace Day8
                     secontToLastCommand = true;
             }
 
-            return value;
+            return (value, loops);
         }
     }
 }
