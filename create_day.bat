@@ -8,3 +8,4 @@ cd ../..
 dotnet sln add src/%project%
 cd test
 dotnet add reference ../src/%project%
+cd ..
