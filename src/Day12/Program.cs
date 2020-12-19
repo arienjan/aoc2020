@@ -9,7 +9,7 @@ namespace Day12
 {
     public class Program
     {
-        private static Regex regex = new Regex(@"^(N|E|S|W|F|R|L)(\d+)$");
+        private static readonly Regex regex = new Regex(@"^(N|E|S|W|F|R|L)(\d+)$");
         static void Main()
         {
             var input = InputGetter.ReadInputAsLines<string>(2020, 12).Result;
