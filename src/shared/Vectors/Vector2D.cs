@@ -12,5 +12,6 @@
         }
 
         public static Vector2D operator +(Vector2D v1, Vector2D v2) => new Vector2D(v1.x + v2.x, v1.y + v2.y);
+        public static Vector2D operator *(int value, Vector2D v) => new Vector2D(v.x * value, v.y * value);
     }
 }
